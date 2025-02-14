@@ -8,7 +8,7 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'posts', PostViewSet)
 router.register(r'comments', CommentViewSet)
-router.register(r'likes', LikeViewSet)
+router.register(r'likes', LikeViewSet, basename = 'like')
 
 
 urlpatterns = [
