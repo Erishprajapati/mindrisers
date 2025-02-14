@@ -80,3 +80,12 @@ class LikeViewSet(viewsets.ModelViewSet):
                 {"message": "Post not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+def home(request):
+    return render(request, 'home.html')
+
+def login_view(request):
+    return render(request, 'login.html')
+
+def register_view(request):
+    return render(request, 'register.html')
