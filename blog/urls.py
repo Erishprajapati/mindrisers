@@ -10,7 +10,9 @@ router.register(r'posts', PostViewSet)
 router.register(r'comments', CommentViewSet)
 router.register(r'likes', LikeViewSet, basename = 'like')
 
-
 urlpatterns = [
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('',home,name='home'),
+    path('login/', views.login_view, name = 'login'),
+    path('register/', views.register_view, name = 'register')
 ]
