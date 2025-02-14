@@ -1,0 +1,36 @@
+from django.db import models
+
+# Create your models here.
+class User(models.Model):
+    username = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=30)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null = True, blank = True)
+    bio = models.CharField(max_length=100, blnak = True)
+    created_at = models.DateTimeField(auto_created=True)
+
+class Post(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.SlugField(unique = True)
+    content = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    tags = models.ManyToManyField('Tag', blank = True)
+    created_at = models.DateTimeField(auto_created=True)
+    updated_at = models.DateTimeField(auto_created=True)
+    
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE) 
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_created=True)
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField()
+    description = models.TextField()
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_created=True)
