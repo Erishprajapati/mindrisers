@@ -1,7 +1,16 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
+from rest_framework.routers import DefaultRouter
+from .views import *
+
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
+router.register(r'users', UserViewSet)
+router.register(r'posts', PostViewSet)
+router.register(r'comments', CommentViewSet)
+router.register(r'likes', LikeViewSet)
+
 
 urlpatterns = [
-    path('', views.post_list, name='post_list'),
-    path('<slug:slug>/', views.post_detail, name='post_detail'),
+    path('api/', include(router.urls))
 ]
