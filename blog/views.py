@@ -39,25 +39,44 @@ class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
 
-    
-    def create(self, request, *args, **kwargs):  # Create a like for a post
+    def create(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
         post_id = request.data.get('post_id')
+
+        # Check if user_id and post_id are provided
+        if not user_id or not post_id:
+            return Response(
+                {"message": "Both 'user_id' and 'post_id' are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             user = User.objects.get(id=user_id)
             post = Post.objects.get(id=post_id)
 
+            # Check if like already exists for the given user and post
             like, created = Like.objects.get_or_create(user=user, post=post)
-            if not created:
-                like.delete()
-                return Response({"message": "Post Unliked"}, status=status.HTTP_200_OK)  # If already liked, it will be unliked.
 
-            return Response({"message": "Post Liked"}, status=status.HTTP_201_CREATED)  # If not liked, it will be liked.
+            if not created:
+                like.delete()  # Remove the like if it already exists (unlike the post)
+                return Response(
+                    {"message": "Post Unliked"},
+                    status=status.HTTP_200_OK
+                )
+
+            # Create a new like if it didn't exist
+            return Response(
+                {"message": "Post Liked"},
+                status=status.HTTP_201_CREATED
+            )
 
         except User.DoesNotExist:
-            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)  # User not found.
+            return Response(
+                {"message": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
         except Post.DoesNotExist:
-            return Response({"message": "Post not found"}, status=status.HTTP_404_NOT_FOUND)  # Post not found.
-
-
+            return Response(
+                {"message": "Post not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
