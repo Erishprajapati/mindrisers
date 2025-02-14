@@ -9,13 +9,21 @@ class User(models.Model):
     bio = models.CharField(max_length=100, blank = True)
     created_at = models.DateTimeField(auto_created=True)
 
+    def __str__(self):
+        return self.username
+    
+
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
-    slug = models.SlugField(unique = True)
+    slug = models.SlugField(unique=True)
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_created=True)
-    updated_at = models.DateTimeField(auto_created=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
     
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -27,6 +35,9 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField()
     description = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 
 class Like(models.Model):
