@@ -6,7 +6,7 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=30)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null = True, blank = True)
-    bio = models.CharField(max_length=100, blnak = True)
+    bio = models.CharField(max_length=100, blank = True)
     created_at = models.DateTimeField(auto_created=True)
 
 class Post(models.Model):
@@ -14,7 +14,6 @@ class Post(models.Model):
     slug = models.SlugField(unique = True)
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    tags = models.ManyToManyField('Tag', blank = True)
     created_at = models.DateTimeField(auto_created=True)
     updated_at = models.DateTimeField(auto_created=True)
     
