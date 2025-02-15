@@ -5,7 +5,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.contrib import messages
 from django.contrib.auth import logout
-
+from .forms import LoginForm
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 def post_list(request): #it shows the list of the post that can be viewed by the user
@@ -14,7 +15,7 @@ def post_list(request): #it shows the list of the post that can be viewed by the
 
 def post_detail(request, slug): #it shows the detail of the post that can be viewed by the user
     post = get_object_or_404(Post, slug=slug) #slug shows the url instead of pk/id
-    return render(request, 'blog/post_detail.html', {'post': post})
+    return render(request, 'post_detail.html', {'post': post})
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -85,7 +86,8 @@ class LikeViewSet(viewsets.ModelViewSet):
             )
         
 def home(request):
-    return render(request, 'home.html')
+    posts = Post.objects.all()
+    return render(request, 'home.html', {'posts': posts})
 
 def login_view(request):
     return render(request, 'login.html')
@@ -105,3 +107,17 @@ def confirm_logout(request):
         messages.success(request, "Account logout successfully")
         return redirect('home')
     return redirect('logout')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, email = email, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to home after successful login
+        else:
+            messages.error(request, 'Invalid username or password.')
+    
+    return render(request, 'login.html')
