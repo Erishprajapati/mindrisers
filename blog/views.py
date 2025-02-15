@@ -121,3 +121,34 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'login.html')
+
+
+def register_view(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        bio = request.POST['bio']
+        profile_pic = request.FILES.get('profile_pic')
+
+        # Check if username or email already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username is already in use")
+            return redirect("register")
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect("register")
+
+        # Creating a new user
+        user = User.objects.create_user(username=username, email=email, password=password)
+
+        # Save additional details (assuming Profile model exists)
+        user.profile.bio = bio  # Profile model should have a OneToOneField linked to User
+        if profile_pic:
+            user.profile.profile_picture = profile_pic  # Assuming Profile model has `profile_picture`
+        user.profile.save()  # Save profile
+
+        messages.success(request, "Registration successful! Please log in.")
+        return redirect("login")
+
+    return render(request, "register.html")
