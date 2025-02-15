@@ -35,6 +35,12 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)  # Automatically generate a slug from the title
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
     
@@ -46,7 +52,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.author.username
-
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
