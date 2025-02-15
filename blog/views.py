@@ -1,8 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from .models import *
 from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.contrib import messages
+from django.contrib.auth import logout
+
 
 # Create your views here.
 def post_list(request): #it shows the list of the post that can be viewed by the user
@@ -89,3 +92,16 @@ def login_view(request):
 
 def register_view(request):
     return render(request, 'register.html')
+
+
+def logout_confirmation(request):
+    """Render the logout confirmation page."""
+    return render(request,'logout.html')
+
+
+def confirm_logout(request):
+    if request.method == "POST":
+        logout(request)
+        messages.success(request, "Account logout successfully")
+        return redirect('home')
+    return redirect('logout')
