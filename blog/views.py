@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def post_list(request): #it shows the list of the post that can be viewed by the user
@@ -15,7 +16,36 @@ def post_list(request): #it shows the list of the post that can be viewed by the
 
 def post_detail(request, slug): #it shows the detail of the post that can be viewed by the user
     post = get_object_or_404(Post, slug=slug) #slug shows the url instead of pk/id
+    comments = Comment.objects.filter(post = Post)
     return render(request, 'post_detail.html', {'post': post})
+
+
+@login_required
+def create_post(request):
+    """check if user is validated/authenticate or not then user can create a blog"""
+    if request.method == "POST":
+        title = request.POST['title']
+        content = request.POST['content']
+        post = Post.obejcts.create(title=title, content = content, author = request.user)
+        return redirect('home')
+    return render(request,'create_post.html')
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id = post_id)
+    if request.method == "POST":
+        content = request.POST['content']
+        Comment.objects.create(post =post, user = request.user, content = content)
+    return redirect('post_detail', post_id = post.id)
+
+
+
+
+# def post_detail(request, post_id): """ when user clicks on any post it helps to view the post information and description about that posts"""
+#     post = get_object_or_404(Post, id = post_id)
+#     comments = Comment.objects.filter(post=Post)
+#     return render(request, 'post_detail.html', {'post':post, 'comments': comments})
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -89,11 +119,11 @@ def home(request):
     posts = Post.objects.all()
     return render(request, 'home.html', {'posts': posts})
 
-def login_view(request):
-    return render(request, 'login.html')
+# def login_view(request):
+#     return render(request, 'login.html')
 
-def register_view(request):
-    return render(request, 'register.html')
+# def register_view(request):
+#     return render(request, 'register.html')
 
 
 def logout_confirmation(request):
