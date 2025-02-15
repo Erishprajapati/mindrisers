@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404,redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from .serializers import *
 from rest_framework import viewsets, status
@@ -8,45 +8,68 @@ from django.contrib.auth import logout
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 # Create your views here.
-def post_list(request): #it shows the list of the post that can be viewed by the user
-    posts = Post.objects.all()
-    return render(request, 'post_list.html', {'posts': posts})
 
-def post_detail(request, slug): #it shows the detail of the post that can be viewed by the user
-    post = get_object_or_404(Post, slug=slug) #slug shows the url instead of pk/id
-    comments = Comment.objects.filter(post = Post)
-    return render(request, 'post_detail.html', {'post': post})
-
+def post_list(request):
+    posts = Post.objects.all()  # Fetch all the posts
+    paginator = Paginator(posts, 6)  # Create a paginator with 6 posts per page
+    page_number = request.GET.get('page')  # Get the current page number from the request
+    page_obj = paginator.get_page(page_number)  # Get the current page object
+    
+    # Pass both 'posts' and 'page_obj' in a single dictionary
+    return render(request, 'post_list.html', {'posts': page_obj})
 
 @login_required
+
+def post_detail(request, post_slug):
+    post = Post.objects.get(slug=post_slug)  # Use slug to get the post
+    
+    # Handle the comment submission
+    if request.method == "POST":
+        content = request.POST['content']
+        
+        # Ensure the comment is saved with the correct user and the post
+        if request.user.is_authenticated:
+            user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
+            comment = Comment(post=post, author=user, content=content)
+            comment.save()
+        else:
+            # If the user is not authenticated, handle accordingly (e.g., show an error message)
+            return redirect('login')  # Or another appropriate action if needed
+
+        # Redirect to the same post page after adding the comment
+        return redirect('post_detail', post_slug=post.slug)
+
+    return render(request, 'post_detail.html', {'post': post})
+@login_required
 def create_post(request):
-    """check if user is validated/authenticate or not then user can create a blog"""
     if request.method == "POST":
         title = request.POST['title']
         content = request.POST['content']
-        post = Post.obejcts.create(title=title, content = content, author = request.user)
+        post = Post.objects.create(title=title, content=content, author=request.user)  # Fixed typo
         return redirect('home')
-    return render(request,'create_post.html')
+    return render(request, 'create_post.html')
 
+def search_blogs(request):
+    query = request.GET.get('q')
+    posts = Post.objects.filter(title__icontains=query)  # Corrected filter
+    return render(request, 'search_results.html', {'posts': posts})
+
+def filter_blogs(request, tag_name):
+    posts = Post.objects.filter(tags__name=tag_name)  # Changed Blog to Post
+    return render(request, 'filter_results.html', {'posts': posts})
 
 @login_required
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, id = post_id)
+    post = get_object_or_404(Post, id=post_id)
     if request.method == "POST":
         content = request.POST['content']
-        Comment.objects.create(post =post, user = request.user, content = content)
-    return redirect('post_detail', post_id = post.id)
+        Comment.objects.create(post=post, user=request.user, content=content)
+    return redirect('post_detail', slug=post.slug)  # Fixed the redirect to use slug instead of id
 
-
-
-
-# def post_detail(request, post_id): """ when user clicks on any post it helps to view the post information and description about that posts"""
-#     post = get_object_or_404(Post, id = post_id)
-#     comments = Comment.objects.filter(post=Post)
-#     return render(request, 'post_detail.html', {'post':post, 'comments': comments})
-
+# ViewSets for API
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -64,7 +87,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        post_id = self.request.query_params.get('post_id', None)  # Fixed typo
+        post_id = self.request.query_params.get('post_id', None)
         if post_id:
             return Comment.objects.filter(post_id=post_id)
         return Comment.objects.all()
@@ -77,7 +100,6 @@ class LikeViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user_id')
         post_id = request.data.get('post_id')
 
-        # Check if user_id and post_id are provided
         if not user_id or not post_id:
             return Response(
                 {"message": "Both 'user_id' and 'post_id' are required."},
@@ -88,17 +110,15 @@ class LikeViewSet(viewsets.ModelViewSet):
             user = User.objects.get(id=user_id)
             post = Post.objects.get(id=post_id)
 
-            # Check if like already exists for the given user and post
             like, created = Like.objects.get_or_create(user=user, post=post)
 
             if not created:
-                like.delete()  # Remove the like if it already exists (unlike the post)
+                like.delete()
                 return Response(
                     {"message": "Post Unliked"},
                     status=status.HTTP_200_OK
                 )
 
-            # Create a new like if it didn't exist
             return Response(
                 {"message": "Post Liked"},
                 status=status.HTTP_201_CREATED
@@ -114,22 +134,13 @@ class LikeViewSet(viewsets.ModelViewSet):
                 {"message": "Post not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
-        
+
 def home(request):
     posts = Post.objects.all()
     return render(request, 'home.html', {'posts': posts})
 
-# def login_view(request):
-#     return render(request, 'login.html')
-
-# def register_view(request):
-#     return render(request, 'register.html')
-
-
 def logout_confirmation(request):
-    """Render the logout confirmation page."""
-    return render(request,'logout.html')
-
+    return render(request, 'logout.html')
 
 def confirm_logout(request):
     if request.method == "POST":
@@ -143,15 +154,14 @@ def login_view(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, email = email, password=password)
+        user = authenticate(request, username=username, email=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')  # Redirect to home after successful login
+            return redirect('home')
         else:
             messages.error(request, 'Invalid username or password.')
     
     return render(request, 'login.html')
-
 
 def register_view(request):
     if request.method == "POST":
@@ -161,7 +171,6 @@ def register_view(request):
         bio = request.POST['bio']
         profile_pic = request.FILES.get('profile_pic')
 
-        # Check if username or email already exists
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username is already in use")
             return redirect("register")
@@ -169,14 +178,12 @@ def register_view(request):
             messages.error(request, "Email already registered")
             return redirect("register")
 
-        # Creating a new user
         user = User.objects.create_user(username=username, email=email, password=password)
 
-        # Save additional details (assuming Profile model exists)
-        user.profile.bio = bio  # Profile model should have a OneToOneField linked to User
+        user.profile.bio = bio
         if profile_pic:
-            user.profile.profile_picture = profile_pic  # Assuming Profile model has `profile_picture`
-        user.profile.save()  # Save profile
+            user.profile.profile_picture = profile_pic
+        user.profile.save()
 
         messages.success(request, "Registration successful! Please log in.")
         return redirect("login")

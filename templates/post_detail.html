@@ -1,23 +1,25 @@
 {% extends "base.html" %}
-{% block title %}{{ % post.title % }}{% endblock title %}
+{% block title %}{{ post.title }}{% endblock title %}
 {% block content %}
 <h1>{{ post.title }}</h1>
 <p>{{ post.content }}</p>
 <p>Written by: {{ post.author.username }}</p>
 <p>Created at: {{ post.created_at }}</p>
+
 <h3>Comments</h3>
-<div id = "comments">
-    { % for comment in  post.comments.all % }
-    <div class = "comment">
-        <p><b>{{ comment.user.username }}</b></p>
+<div id="comments">
+    {% for comment in post.comments.all %}
+    <div class="comment">
+        <p><b>{{ comment.author.username }}</b></p>  <!-- Updated to 'author' -->
         <small> Posted on {{ comment.created_at }}</small>
+        <p>{{ comment.content }}</p>  <!-- Display the content of the comment -->
     </div>
     {% endfor %}
 </div>
 
-<form method = "POST">
-    { % csrf_token% }
-    <textarea name = "content" required></textarea>
-    <button type = "submit">Add Comment</button>
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="content" required></textarea>
+    <button type="submit">Add Comment</button>
 </form>
 {% endblock content %}
