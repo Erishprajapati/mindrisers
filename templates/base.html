@@ -8,36 +8,77 @@
     <style>
         /* Custom CSS for Navbar */
         .navbar {
-            background-color: #333;
+            background: linear-gradient(135deg, #6a11cb, #2575fc); /* Vibrant gradient */
+            padding: 12px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
+        
         .navbar-brand {
             color: #fff !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-
+        
         .navbar-nav .nav-link {
-            color: #ddd !important;
+            color: #f8f9fa !important;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+            padding: 8px 15px;
         }
-
+        
         .navbar-nav .nav-link:hover {
-            color: #fff !important;
+            color: #ffdd57 !important; /* Bright yellow hover effect */
+            transform: scale(1.1);
         }
-
+        
         .dropdown-menu {
-            background-color: #444;
+            background: linear-gradient(135deg, #2575fc, #6a11cb); /* Reverse gradient */
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
+        
+        .dropdown-item {
+            color: #fff !important;
+            transition: all 0.3s ease-in-out;
+        }
+        
         .dropdown-item:hover {
-            background-color: #555;
+            background-color: #ffdd57;
+            color: #333 !important;
+            font-weight: bold;
+            transform: scale(1.05);
         }
-
+        
+        /* Rounded Search Bar */
         .form-control {
             border-radius: 20px;
+            border: 2px solid #fff;
+            padding: 10px;
+            transition: all 0.3s ease-in-out;
         }
-
+        
+        .form-control:focus {
+            border-color: #ffdd57;
+            box-shadow: 0 0 10px rgba(255, 221, 87, 0.5);
+        }
+        
+        /* Custom Button Styles */
         .btn-outline-success {
             border-radius: 20px;
+            border: 2px solid #fff;
+            color: #fff;
+            background: transparent;
+            transition: all 0.3s ease-in-out;
         }
+        
+        .btn-outline-success:hover {
+            background: #ffdd57;
+            color: #333;
+            border-color: #ffdd57;
+            transform: scale(1.05);
+        }
+        
     </style>
 </head>
 <body>

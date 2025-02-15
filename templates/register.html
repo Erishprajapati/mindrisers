@@ -5,10 +5,21 @@
     <h2 class="text-center mb-4">Register</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+
+        {% if messages %}
+<div class="alert alert-dismissible fade show mt-3">
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
         
         <!-- Username Field -->
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label">username</label>
             <input type="text" class="form-control" id="username" name="username" required>
         </div>
 
