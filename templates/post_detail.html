@@ -4,66 +4,131 @@
 
 {% block content %}
 <style>
-    /* Layout for the post container */
+/* Layout adjustments */
 .post-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     padding: 20px;
 }
 
-/* Main post section (75% width) */
+/* Main post section (60% width) */
 .main-post {
-    width: 75%;
-    padding-right: 20px;
+    width: 60%;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .main-post h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
 }
 
 .main-post p {
     font-size: 1rem;
     color: #333;
-    margin: 5px 0;
 }
 
-.main-post h3 {
-    margin-top: 30px;
-    font-size: 1.5rem;
+.post-meta {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 10px;
 }
+
+/* Buttons for like and save */
+.actions {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+button.like-btn, button.save-btn {
+    border: none;
+    background-color: #2575fc;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+button.save-btn {
+    background-color: #ff9800;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Comment Section */
 #comments {
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .comment {
-    background-color: #f1f1f1;  /* Slightly darker background */
-    padding: 10px;  /* Reduced padding for a more compact look */
-    border-radius: 8px;  /* Slightly rounded corners */
-    margin-bottom: 8px;  /* Reduced margin for less space between comments */
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);  /* Lighter shadow for a more subtle effect */
-    font-size: 0.95rem;  /* Slightly smaller font size */
+    background-color: #f1f1f1;
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
 }
 
 .comment b {
-    font-size: 1rem;  /* Smaller bold text for the author name */
-    color: #333;  /* Darker color for better readability */
+    font-size: 0.95rem;
 }
 
 .comment small {
-    color: #888;  /* Slightly lighter color for the timestamp */
-    font-size: 0.85rem;  /* Smaller font size for the timestamp */
-    display: block;  /* Ensures the timestamp is below the author's name */
-    margin-top: 4px;
+    color: #666;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 3px;
 }
 
 .comment p {
-    margin-top: 5px;  /* Reduced margin to make the content more compact */
-    font-size: 0.95rem;  /* Smaller font size for the comment content */
+    margin-top: 3px;
+    font-size: 0.9rem;
 }
-/* Sidebar for other posts */
+
+/* Comment Form - Facebook-like styling */
+form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+form textarea {
+    resize: none;
+    height: 40px;
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    flex: 1;
+}
+
+form button {
+    padding: 8px 14px;
+    border: none;
+    background-color: #2575fc;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+form button:hover {
+    background-color: #6a11cb;
+}
+
+/* Sidebar */
 .sidebar {
-    width: 20%;
+    width: 25%;
     padding-left: 20px;
     background-color: #f7f7f7;
     border-radius: 6px;
@@ -71,8 +136,8 @@
 }
 
 .sidebar h3 {
-    font-size: 1.3rem;
-    margin-bottom: 20px;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
 }
 
 .sidebar ul {
@@ -81,59 +146,28 @@
 }
 
 .sidebar ul li {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .sidebar ul li a {
     text-decoration: none;
     color: #2575fc;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .sidebar ul li a:hover {
     text-decoration: underline;
 }
 
-/* Styling for the comment form */
-form {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-}
-
-form textarea {
-    resize: vertical;
-    min-height: 100px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-}
-
-form button {
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    background-color: #2575fc;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1rem;
-}
-
-form button:hover {
-    background-color: #6a11cb;
-}
-
-/* Media query for responsiveness */
+/* Responsive */
 @media (max-width: 768px) {
     .post-container {
         flex-direction: column;
+        align-items: center;
     }
 
     .main-post {
-        width: 100%;
-        padding-right: 0;
+        width: 90%;
     }
 
     .sidebar {
@@ -141,33 +175,41 @@ form button:hover {
         margin-top: 20px;
     }
 }
-
 </style>
+
 <div class="post-container">
     <div class="main-post">
         <h1>{{ post.title }}</h1>
+        <p class="post-meta">Written by: {{ post.author.username }} | Created at: {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
-        <p>Written by: {{ post.author.username }}</p>
-        <p>Created at: {{ post.created_at }}</p>
-        
+
+        <!-- Like & Save Buttons -->
+        <div class="actions">
+            <button class="like-btn">👍 Like</button>
+            <button class="save-btn">💾 Save</button>
+        </div>
+
+        <!-- Comments Section -->
         <h3>Comments</h3>
         <div id="comments">
             {% for comment in post.comments.all %}
             <div class="comment">
-                <p><b>{{ comment.author.username }}</b></p>  
+                <p><b>{{ comment.author.username }}</b></p>
                 <small>Posted on {{ comment.created_at }}</small>
                 <p>{{ comment.content }}</p>
             </div>
             {% endfor %}
         </div>
 
+        <!-- Comment Form -->
         <form method="POST">
             {% csrf_token %}
-            <textarea name="content" required></textarea>
-            <button type="submit">Add Comment</button>
+            <textarea name="content" placeholder="Write a comment..." required></textarea>
+            <button type="submit">Post</button>
         </form>
     </div>
 
+    <!-- Sidebar -->
     <div class="sidebar">
         <h3>Other Posts by {{ post.author.username }}</h3>
         <ul>
@@ -176,6 +218,7 @@ form button:hover {
             {% endfor %}
         </ul>
     </div>
-    
-    
+</div>
+
 {% endblock content %}
+

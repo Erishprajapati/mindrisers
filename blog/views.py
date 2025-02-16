@@ -24,27 +24,23 @@ def post_list(request):
 
 @login_required
 def post_detail(request, post_slug):
-    post = Post.objects.get(slug=post_slug)  # Use slug to get the post
+    post = Post.objects.get(slug=post_slug)  # Get the post by slug
     
     # Handle the comment submission
     if request.method == "POST":
         content = request.POST['content']
         
-        # Ensure the comment is saved with the correct user and the post
         if request.user.is_authenticated:
-            user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
-            comment = Comment(post=post, author=user, content=content)
+            comment = Comment(post=post, author=request.user, content=content)
             comment.save()
         else:
-            # If the user is not authenticated, handle accordingly (e.g., show an error message)
-            return redirect('login')  # Or another appropriate action if needed
+            # If user is not authenticated, redirect or show error
+            return redirect('login')  # Redirect to login page (adjust URL if needed)
 
-        # Redirect to the same post page after adding the comment
+        # After saving the comment, redirect to the same post page
         return redirect('post_detail', post_slug=post.slug)
 
     return render(request, 'post_detail.html', {'post': post})
-
-
 @login_required
 def create_post(request):
     categories = Category.objects.all()  # ✅ Fetch categories from the database
@@ -110,7 +106,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         post_id = self.request.query_params.get('post_id', None)
         if post_id:
-            return Comment.objects.filter(post_id=post_id)
+            return Comment.objects.filter(post_slug=post_slug)
         return Comment.objects.all()
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -215,3 +211,14 @@ def register_view(request):
         return redirect("login")
 
     return render(request, "register.html")
+
+
+@login_required
+def saved_posts(request):
+    try:
+        user = User.objects.get(username=request.user.username)  # Ensure it's a User instance
+        saved_posts = SavedPost.objects.filter(user=request.user)
+        # user = user.save()
+        return render(request, 'saved.html', {'saved_posts': saved_posts})
+    except User.DoesNotExist:
+        return render(request, 'saved.html', {'error': 'User not found'})
