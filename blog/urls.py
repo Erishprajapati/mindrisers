@@ -13,6 +13,7 @@ router.register(r'likes', LikeViewSet, basename = 'like')
 urlpatterns = [
     path('api/', include(router.urls)),
     path('',home,name='home'),
+    path('create/', create_post, name="create_post"),
     path('post/<slug:post_slug>/', views.post_detail, name='post_detail'),
     path('post/<slug:slug>/', views.post_list, name='post_list'),
     path('login/', views.login_view, name = 'login'),

@@ -43,14 +43,35 @@ def post_detail(request, post_slug):
         return redirect('post_detail', post_slug=post.slug)
 
     return render(request, 'post_detail.html', {'post': post})
+
+
 @login_required
 def create_post(request):
+    categories = Category.objects.all()  # ✅ Fetch categories from the database
+
     if request.method == "POST":
-        title = request.POST['title']
-        content = request.POST['content']
-        post = Post.objects.create(title=title, content=content, author=request.user)  # Fixed typo
+        title = request.POST.get('title')
+        slug = request.POST.get('slug')
+        content = request.POST.get('content')
+        category_slug = request.POST.get('category')  # Fetching category by slug
+        image = request.FILES.get('image')  # Handling file upload
+
+        user = User.objects.get(username=request.user.username)  # ✅ Get actual User instance
+        
+        # ✅ Fetch category using slug instead of ID
+        category = Category.objects.get(slug=category_slug)  
+
+        Post.objects.create(
+            title=title,
+            slug=slug,
+            content=content,
+            category=category,  # ✅ Assign category using slug
+            image=image,
+            author=user  # ✅ Assign proper User instance
+        )
         return redirect('home')
-    return render(request, 'create_post.html')
+
+    return render(request, 'create_post.html', {'categories': categories})  # ✅ Pass categories
 
 def search_blogs(request):
     query = request.GET.get('q')

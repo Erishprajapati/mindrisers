@@ -7,77 +7,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* Custom CSS for Navbar */
-        .navbar {
-            background: linear-gradient(135deg, #6a11cb, #2575fc); /* Vibrant gradient */
-            padding: 12px 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-brand {
-            color: #fff !important;
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        
-        .navbar-nav .nav-link {
-            color: #f8f9fa !important;
-            font-weight: 500;
-            transition: all 0.3s ease-in-out;
-            padding: 8px 15px;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: #ffdd57 !important; /* Bright yellow hover effect */
-            transform: scale(1.1);
-        }
-        
-        .dropdown-menu {
-            background: linear-gradient(135deg, #2575fc, #6a11cb); /* Reverse gradient */
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .dropdown-item {
-            color: #fff !important;
-            transition: all 0.3s ease-in-out;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #ffdd57;
-            color: #333 !important;
-            font-weight: bold;
-            transform: scale(1.05);
-        }
-        
-        /* Rounded Search Bar */
-        .form-control {
-            border-radius: 20px;
-            border: 2px solid #fff;
-            padding: 10px;
-            transition: all 0.3s ease-in-out;
-        }
-        
-        .form-control:focus {
-            border-color: #ffdd57;
-            box-shadow: 0 0 10px rgba(255, 221, 87, 0.5);
-        }
-        
-        /* Custom Button Styles */
-        .btn-outline-success {
-            border-radius: 20px;
-            border: 2px solid #fff;
-            color: #fff;
-            background: transparent;
-            transition: all 0.3s ease-in-out;
-        }
-        
-        .btn-outline-success:hover {
-            background: #ffdd57;
-            color: #333;
-            border-color: #ffdd57;
-            transform: scale(1.05);
-        }
+        /* Navbar Styling */
+.navbar {
+    background: linear-gradient(135deg, #1e3c72, #2a5298); /* Modern blue gradient */
+    padding: 14px 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Brand */
+.navbar-brand {
+    color: #ffffff !important;
+    font-size: 1.6rem;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+    color: #ffdd57 !important;
+}
+
+/* Navbar Links */
+.navbar-nav .nav-link {
+    color: #e0e0e0 !important;
+    font-weight: 500;
+    padding: 10px 18px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+.navbar-nav .nav-link:hover {
+    background: rgba(255, 221, 87, 0.2);
+    color: #ffdd57 !important;
+    transform: translateY(-2px);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    border: none;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.dropdown-item {
+    color: #ffffff !important;
+    padding: 12px 18px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+}
+
+.dropdown-item:hover {
+    background: #ffdd57;
+    color: #222 !important;
+    font-weight: bold;
+    transform: translateX(5px);
+}
+
+/* Search Bar */
+.form-control {
+    border-radius: 25px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-control:focus {
+    border-color: #ffdd57;
+    box-shadow: 0 0 12px rgba(255, 221, 87, 0.5);
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+/* Custom Buttons */
+.btn-outline-success {
+    border-radius: 25px;
+    border: 2px solid #fff;
+    color: #fff;
+    background: transparent;
+    padding: 10px 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-outline-success:hover {
+    background: #ffdd57;
+    color: #222;
+    border-color: #ffdd57;
+    transform: scale(1.07);
+    box-shadow: 0 0 12px rgba(255, 221, 87, 0.5);
+}
+
         
     </style>
 </head>
@@ -92,10 +119,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Create Post</a>
+                        <a class="nav-link" href="{% url 'create_post'%}">Create Post</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -136,7 +163,33 @@
         {% block content %}
         {% endblock %}
     </div>
-
+<script>
+        // Function to fetch categories from the API and populate the dropdown
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchCategories();
+        });
+        
+        function fetchCategories() {
+            fetch('http://127.0.0.1:8000/api/categories/')
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById('categoryDropdown');
+                    dropdown.innerHTML = ''; // Clear the dropdown first
+                    data.forEach(category => {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.classList.add('dropdown-item');
+                        a.href = "#"; // Or add a specific link for each category if needed
+                        a.textContent = category.name; // Display category name
+                        li.appendChild(a);
+                        dropdown.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                });
+        }
+</script>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
