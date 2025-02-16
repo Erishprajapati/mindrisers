@@ -145,6 +145,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% if user.is_authenticated %}
+                                <li><a class="dropdown-item" href="{% url 'saved' %}">Saved Posts</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>

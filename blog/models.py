@@ -65,3 +65,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+class SavedPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    # def __str__(self):
+    #     return f"{self.user} saved {self.post}"
