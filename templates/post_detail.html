@@ -1,25 +1,181 @@
 {% extends "base.html" %}
+
 {% block title %}{{ post.title }}{% endblock title %}
+
 {% block content %}
-<h1>{{ post.title }}</h1>
-<p>{{ post.content }}</p>
-<p>Written by: {{ post.author.username }}</p>
-<p>Created at: {{ post.created_at }}</p>
+<style>
+    /* Layout for the post container */
+.post-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
 
-<h3>Comments</h3>
-<div id="comments">
-    {% for comment in post.comments.all %}
-    <div class="comment">
-        <p><b>{{ comment.author.username }}</b></p>  <!-- Updated to 'author' -->
-        <small> Posted on {{ comment.created_at }}</small>
-        <p>{{ comment.content }}</p>  <!-- Display the content of the comment -->
+/* Main post section (75% width) */
+.main-post {
+    width: 75%;
+    padding-right: 20px;
+}
+
+.main-post h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.main-post p {
+    font-size: 1rem;
+    color: #333;
+    margin: 5px 0;
+}
+
+.main-post h3 {
+    margin-top: 30px;
+    font-size: 1.5rem;
+}
+#comments {
+    margin-top: 15px;
+}
+
+.comment {
+    background-color: #f1f1f1;  /* Slightly darker background */
+    padding: 10px;  /* Reduced padding for a more compact look */
+    border-radius: 8px;  /* Slightly rounded corners */
+    margin-bottom: 8px;  /* Reduced margin for less space between comments */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);  /* Lighter shadow for a more subtle effect */
+    font-size: 0.95rem;  /* Slightly smaller font size */
+}
+
+.comment b {
+    font-size: 1rem;  /* Smaller bold text for the author name */
+    color: #333;  /* Darker color for better readability */
+}
+
+.comment small {
+    color: #888;  /* Slightly lighter color for the timestamp */
+    font-size: 0.85rem;  /* Smaller font size for the timestamp */
+    display: block;  /* Ensures the timestamp is below the author's name */
+    margin-top: 4px;
+}
+
+.comment p {
+    margin-top: 5px;  /* Reduced margin to make the content more compact */
+    font-size: 0.95rem;  /* Smaller font size for the comment content */
+}
+/* Sidebar for other posts */
+.sidebar {
+    width: 20%;
+    padding-left: 20px;
+    background-color: #f7f7f7;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #2575fc;
+    font-size: 1.1rem;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Styling for the comment form */
+form {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+form button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    background-color: #2575fc;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+form button:hover {
+    background-color: #6a11cb;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .post-container {
+        flex-direction: column;
+    }
+
+    .main-post {
+        width: 100%;
+        padding-right: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+
+</style>
+<div class="post-container">
+    <div class="main-post">
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.content }}</p>
+        <p>Written by: {{ post.author.username }}</p>
+        <p>Created at: {{ post.created_at }}</p>
+        
+        <h3>Comments</h3>
+        <div id="comments">
+            {% for comment in post.comments.all %}
+            <div class="comment">
+                <p><b>{{ comment.author.username }}</b></p>  
+                <small>Posted on {{ comment.created_at }}</small>
+                <p>{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="content" required></textarea>
+            <button type="submit">Add Comment</button>
+        </form>
     </div>
-    {% endfor %}
-</div>
 
-<form method="POST">
-    {% csrf_token %}
-    <textarea name="content" required></textarea>
-    <button type="submit">Add Comment</button>
-</form>
+    <div class="sidebar">
+        <h3>Other Posts by {{ post.author.username }}</h3>
+        <ul>
+            {% for post in post.author.posts.all %}
+                <li><a href="{% url 'post_detail' post_slug=post.slug %}">{{ post.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    
 {% endblock content %}

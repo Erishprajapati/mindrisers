@@ -9,6 +9,7 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -22,7 +23,6 @@ def post_list(request):
     return render(request, 'post_list.html', {'posts': page_obj})
 
 @login_required
-
 def post_detail(request, post_slug):
     post = Post.objects.get(slug=post_slug)  # Use slug to get the post
     
@@ -184,6 +184,7 @@ def login_view(request):
     
     return render(request, 'login.html')
 
+
 def register_view(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -199,12 +200,16 @@ def register_view(request):
             messages.error(request, "Email already registered")
             return redirect("register")
 
+        # Create the user
         user = User.objects.create_user(username=username, email=email, password=password)
 
-        user.profile.bio = bio
+        # Create the user's profile
+        profile = Profile.objects.create(user=user, bio=bio)
+
+        # Assign the profile picture if provided
         if profile_pic:
-            user.profile.profile_picture = profile_pic
-        user.profile.save()
+            profile.profile_picture = profile_pic
+            profile.save()
 
         messages.success(request, "Registration successful! Please log in.")
         return redirect("login")
