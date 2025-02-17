@@ -22,16 +22,15 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.name #returns a readable name instead of complex object type
     
-
 class Post(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     content = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="posts", null=True, blank=True)  # Add this line
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image_url = models.URLField(blank=True, null=True)  # Ensure this field exists
+    image_url =models.ImageField(upload_to='profile-picture/', null=True, blank=True)  # Stores images in "media/profile-picture"
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
