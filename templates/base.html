@@ -134,9 +134,11 @@
                             Categories
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Category 1</a></li>
-                            <li><a class="dropdown-item" href="#">Category 2</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            {% for category in categories %}
+                                <li><a class="dropdown-item" href="{% url 'category_detail' category.slug %}">{{ category.name }}</a></li>
+                            {% empty %}
+                                <li><a class="dropdown-item" href="#">No Categories Available</a></li>
+                            {% endfor %}
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

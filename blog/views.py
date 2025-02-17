@@ -41,6 +41,7 @@ def post_detail(request, post_slug):
         return redirect('post_detail', post_slug=post.slug)
 
     return render(request, 'post_detail.html', {'post': post})
+
 @login_required
 def create_post(request):
     categories = Category.objects.all()  # ✅ Fetch categories from the database
@@ -85,6 +86,11 @@ def add_comment(request, post_id):
         content = request.POST['content']
         Comment.objects.create(post=post, user=request.user, content=content)
     return redirect('post_detail', slug=post.slug)  # Fixed the redirect to use slug instead of id
+
+def CategoryDetailview(request):
+    categories = Category.objects.all()
+    return render(request, "base.html", {"categories": categories})
+
 
 # ViewSets for API
 class CategoryViewSet(viewsets.ModelViewSet):
