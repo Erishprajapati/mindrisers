@@ -9,7 +9,7 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.http import JsonResponse
 
 # Create your views here.
@@ -63,7 +63,7 @@ def post_detail(request, post_slug):
 
 @login_required
 def create_post(request):
-    categories = Category.objects.all()  # ✅ Fetch categories from the database
+    categories = Category.objects.all() # ✅ Fetch categories from the database
 
     if request.method == "POST":
         title = request.POST.get('title')
@@ -71,10 +71,8 @@ def create_post(request):
         content = request.POST.get('content')
         category_slug = request.POST.get('category')  # Fetching category by slug
         image = request.FILES.get('image')  # Handling file upload
-
-        user = User.objects.get(username=request.user.username)  # ✅ Get actual User instance
+        user = request.user # ✅ Get actual User instance
         
-        # ✅ Fetch category using slug instead of ID
         category = Category.objects.get(slug=category_slug)  
 
         Post.objects.create(
@@ -213,26 +211,31 @@ def register_view(request):
         bio = request.POST['bio']
         profile_pic = request.FILES.get('profile_pic')
 
-        if User.objects.filter(username=username).exists():
+        # Check if the username or email already exists
+        if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username is already in use")
             return redirect("register")
-        if User.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "Email already registered")
             return redirect("register")
 
-        # Create the user
-        user = User.objects.create_user(username=username, email=email, password=password)
+        # Create the user using the custom manager's create_user method
+        user = CustomUser.objects.create_user(username=username, email=email, password=password)
 
-        # Create the user's profile
-        profile = Profile.objects.create(user=User, bio=bio)
+        # Create the user's profile (make sure you're passing the correct user object)
+        profile = Profile.objects.create(user=user, bio=bio)
 
         # Assign the profile picture if provided
         if profile_pic:
             profile.profile_picture = profile_pic
             profile.save()
 
-        messages.success(request, "Registration successful! Please log in.")
-        return redirect("login")
+        # Log the user in immediately after registration
+        login(request, user)
+
+        # Success message and redirect to login
+        messages.success(request, "Registration successful! You are now logged in.")
+        return redirect("home")  # or redirect to any page you want to go after login
 
     return render(request, "register.html")
 
@@ -246,3 +249,8 @@ def saved_posts(request):
         return render(request, 'saved.html', {'saved_posts': saved_posts})
     except User.DoesNotExist:
         return render(request, 'saved.html', {'error': 'User not found'})
+
+
+def category_details(request):
+    Category = get_object_or_404(Category, name="Some Category")
+    return render(request, 'category_detail.html', {'category': Category})

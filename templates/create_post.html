@@ -132,7 +132,7 @@
         <label for="category">Category:</label>
         <select name="category" id="category">
             {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
+                <option value="{{ category.slug }}">{{ category.name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -144,5 +144,6 @@
     
 
     <button type="submit">Publish</button>
+    {% comment %} {% endfor %} {% endcomment %}
 </form>
 {% endblock %}

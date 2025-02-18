@@ -21,7 +21,8 @@ urlpatterns = [
     path('register/', views.register_view, name = 'register'),
     path('logout/', logout_confirmation, name= 'logout'),
     path('confirm-logout', confirm_logout, name = 'confirm_logout'),
-    path('saved/',saved_posts, name ='saved')
+    path('saved/',saved_posts, name ='saved'),
+    path('category/<slug:slug>/', category_details, name='category_detail')
     
 ]
 
