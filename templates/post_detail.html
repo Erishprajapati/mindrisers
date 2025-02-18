@@ -14,7 +14,7 @@
         padding: 0;
     }
     
-    /* Post Container - Flexbox Layout */
+    /* Flexbox Layout for Post Page */
     .post-container {
         display: flex;
         justify-content: space-between;
@@ -23,33 +23,24 @@
         flex-wrap: wrap;
     }
     
-    /* Main Post Styling */
+    /* Main Post Section */
     .main-post {
-        width: 65%;
+        width: 70%;
         background: white;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: flex-start;
-        gap: 20px;
     }
     
-    /* Small Blog Image (Left Side) */
     .main-post img {
-        width: 180px;  /* Adjusted size */
-        height: 120px;
-        border-radius: 8px;
+        width: 100%;
+        max-height: 400px;
         object-fit: cover;
-    }
-    
-    /* Text Content */
-    .post-content {
-        flex: 1; /* Takes remaining space */
+        border-radius: 10px;
     }
     
     .post-content h1 {
-        font-size: 1.8rem;
+        font-size: 2rem;
         margin-bottom: 8px;
         color: #222;
     }
@@ -66,18 +57,25 @@
         color: #444;
     }
     
-    /* Like & Save Buttons */
+    /* Like, Save, and Comment Feature - Facebook Style */
     .actions {
         display: flex;
-        gap: 15px;
+        justify-content: space-between;
+        align-items: center;
         margin: 15px 0;
+        padding: 10px 0;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
     }
     
-    button.like-btn, button.save-btn {
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    button {
         border: none;
-        background-color: #2575fc;
-        color: white;
-        padding: 8px 14px;
+        padding: 10px 14px;
         border-radius: 6px;
         cursor: pointer;
         font-size: 0.9rem;
@@ -87,26 +85,45 @@
         transition: background 0.3s ease;
     }
     
-    button.save-btn {
+    .like-btn {
+        background-color: #2575fc;
+        color: white;
+    }
+    
+    .save-btn {
         background-color: #ff9800;
+        color: white;
     }
     
     button:hover {
         opacity: 0.8;
     }
     
-    /* Comments Section */
+    /* Comments Section - Facebook Style */
     #comments {
         margin-top: 20px;
     }
     
     .comment {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
         background: #f8f9fa;
         padding: 10px;
         border-radius: 6px;
         margin-bottom: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        font-size: 0.95rem;
+    }
+    
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ddd;
+    }
+    
+    .comment-content {
+        flex: 1;
     }
     
     .comment b {
@@ -143,17 +160,10 @@
     }
     
     form button {
-        padding: 8px 14px;
-        border: none;
         background-color: #2575fc;
         color: white;
         border-radius: 20px;
-        cursor: pointer;
-        font-size: 0.9rem;
-    }
-    
-    form button:hover {
-        background-color: #1a5bd3;
+        padding: 8px 14px;
     }
     
     /* Sidebar (Other Posts by the Author) */
@@ -200,14 +210,6 @@
     
         .main-post {
             width: 90%;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-    
-        .main-post img {
-            width: 100%;
-            height: auto;
         }
     
         .sidebar {
@@ -219,16 +221,19 @@
 </style>
 
 <div class="post-container">
-    <img src="{{ post.image_url.url }}" class="card-img-top" alt="Blog Image">
+    <!-- Main Post Content -->
     <div class="main-post">
+        <img src="{{ post.image_url.url }}" alt="Blog Image">
         <h1>{{ post.title }}</h1>
         <p class="post-meta">Written by: {{ post.author.username }} | Created at: {{ post.created_at }}</p>
         <p>{{ post.content }}</p>
 
-        <!-- Like & Save Buttons -->
+        <!-- Like, Save, and Comment Buttons -->
         <div class="actions">
-            <button class="like-btn">👍 Like</button>
-            <button class="save-btn">💾 Save</button>
+            <div class="action-buttons">
+                <button class="like-btn" onclick="location.href='liked.html'">👍 Like</button>
+                <button class="save-btn" onclick="location.href='saved.html'">💾 Save</button>
+            </div>
         </div>
 
         <!-- Comments Section -->
@@ -236,9 +241,12 @@
         <div id="comments">
             {% for comment in post.comments.all %}
             <div class="comment">
-                <p><b>{{ comment.author.username }}</b></p>
-                <small>Posted on {{ comment.created_at }}</small>
-                <p>{{ comment.content }}</p>
+                <div class="comment-avatar"></div>
+                <div class="comment-content">
+                    <p><b>{{ comment.author.username }}</b></p>
+                    <small>Posted on {{ comment.created_at }}</small>
+                    <p>{{ comment.content }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -263,4 +271,3 @@
 </div>
 
 {% endblock content %}
-

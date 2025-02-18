@@ -135,7 +135,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% for category in categories %}
-                                <li><a class="dropdown-item" href="{% url 'category_detail' category.slug %}">{{ category.name }}</a></li>
+                                <option value="{{  category.slug.url }}">{{ category.name }}</option>
                             {% empty %}
                                 <li><a class="dropdown-item" href="#">No Categories Available</a></li>
                             {% endfor %}

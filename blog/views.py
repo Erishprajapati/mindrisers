@@ -11,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 # from django.contrib.auth.models import User
 from django.http import JsonResponse
-
 # Create your views here.
 
 def post_list(request):
@@ -254,3 +253,19 @@ def saved_posts(request):
 def category_details(request):
     Category = get_object_or_404(Category, name="Some Category")
     return render(request, 'category_detail.html', {'category': Category})
+
+@login_required
+def like_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    
+    # Check if the user already liked the post
+    existing_like = Like.objects.filter(username=request.user, post=post).first()
+    
+    if existing_like:
+        # If the like exists, remove it (unlike)
+        existing_like.delete()
+    else:
+        # If the like doesn't exist, create a new like
+        Like.objects.create(username=request.user, post=post)
+
+    return redirect('post_detail', post_slug=post.slug)

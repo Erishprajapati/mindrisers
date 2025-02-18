@@ -22,7 +22,9 @@ urlpatterns = [
     path('logout/', logout_confirmation, name= 'logout'),
     path('confirm-logout', confirm_logout, name = 'confirm_logout'),
     path('saved/',saved_posts, name ='saved'),
-    path('category/<slug:slug>/', category_details, name='category_detail')
-    
+    path('category/<slug:category_slug>/', category_details, name='category_details'),
+    path('post/<slug:post_slug>/liked/', like_post, name='like_post')
+
+        
 ]
 
