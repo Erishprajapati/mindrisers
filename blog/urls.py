@@ -3,8 +3,6 @@ from . import views
 from rest_framework.routers import DefaultRouter
 from .views import *
 
-
-
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet)
 router.register(r'users', UserViewSet)
@@ -24,5 +22,6 @@ urlpatterns = [
     path('logout/', logout_confirmation, name= 'logout'),
     path('confirm-logout', confirm_logout, name = 'confirm_logout'),
     path('saved/',saved_posts, name ='saved')
+    
 ]
 

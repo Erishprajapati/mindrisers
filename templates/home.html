@@ -2,7 +2,7 @@
 {% comment %} <p>Number of Posts: {{ posts.count }}</p> {% endcomment %}
 
 {% block content %}
-
+{% load static %}
 <style>
     /* Hover effect to scale the card slightly */
     .hover-effect:hover {
@@ -61,7 +61,7 @@
         {% for post in posts %}
         <div class="col-md-4">
             <div class="card mb-4 shadow-lg border-light rounded hover-effect">
-                <img src="{{ post.image_url }}" class="card-img-top" alt="Blog Image">
+                <img src="{{ post.image_url.url }}" class="card-img-top" alt="Blog Image">
                 <div class="card-body">
                     <h5 class="card-title">
                         <a href="{% url 'post_detail' post.slug %}" class="text-decoration-none text-dark">

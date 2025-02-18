@@ -1,6 +1,9 @@
+{% load static %}
 {% for post in posts %}
+
     <!-- Render the post data here -->
     <div>
+        <img src="{{url post.profile_pic }}"
         <h2>{{ post.title }}</h2>
         <p>{{ post.content }}</p>
     </div>

@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -42,6 +43,24 @@ def post_detail(request, post_slug):
 
     return render(request, 'post_detail.html', {'post': post})
 
+# def update_like(request):
+#     if request.method == "POST":
+#         data = json.loads(request.body)
+#         liked = data.get('liked', False)
+#         post_slug = data.get('post_slug', None)
+
+#         if post_slug:
+#             post = Post.objects.get(slug = post_slug)
+#             user_action, created = UserAction.objects.get_or_create(user = request.user, post = post)
+#             user_action.liked = liked
+#             user_action.save()
+#             return JsonResponse({'status': 'success', 'liked': liked})
+
+#     return JsonResponse({'status': 'error'}, status=400)
+
+
+
+
 @login_required
 def create_post(request):
     categories = Category.objects.all()  # ✅ Fetch categories from the database
@@ -62,9 +81,9 @@ def create_post(request):
             title=title,
             slug=slug,
             content=content,
-            category=category,  # ✅ Assign category using slug
+            category=category,  
             image=image,
-            author=user  # ✅ Assign proper User instance
+            author=user  
         )
         return redirect('home')
 
@@ -90,7 +109,6 @@ def add_comment(request, post_id):
 def CategoryDetailview(request):
     categories = Category.objects.all()
     return render(request, "base.html", {"categories": categories})
-
 
 # ViewSets for API
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -206,7 +224,7 @@ def register_view(request):
         user = User.objects.create_user(username=username, email=email, password=password)
 
         # Create the user's profile
-        profile = Profile.objects.create(user=user, bio=bio)
+        profile = Profile.objects.create(user=User, bio=bio)
 
         # Assign the profile picture if provided
         if profile_pic:

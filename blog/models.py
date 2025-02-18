@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 # Create your models here.
 class User(models.Model):
     username = models.CharField(max_length=100)
@@ -30,7 +31,7 @@ class Post(models.Model):
     content = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="posts", null=True, blank=True)  # Add this line
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image_url =models.ImageField(upload_to='profile-picture/', null=True, blank=True)  # Stores images in "media/profile-picture"
+    image_url =models.ImageField(upload_to='post_images/', null=True, blank=True)  # Stores images in "media/profile-picture"
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -51,24 +52,30 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.author.username
-
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_created=True)
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = "profile")
-    bio = models.TextField()
-    profile_picture = models.ImageField(upload_to = 'profile_pics/', blank = True, null = True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Ensure OneToOneField is used
+    bio = models.TextField(blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return self.User.username
     
 class SavedPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     saved_at = models.DateTimeField(auto_now_add=True)
+    
 
-    # def __str__(self):
-    #     return f"{self.user} saved {self.post}"
+    def __str__(self):
+        return f"{self.user} saved {self.post}"
+
+# class UserAction(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     post = models.ForeignKey(Post, on_delete=models)
+#     liked = models.BooleanField(default=False)
+#     saved = models.BooleanField(default=False)
