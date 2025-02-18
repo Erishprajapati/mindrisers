@@ -57,9 +57,6 @@ def post_detail(request, post_slug):
 
 #     return JsonResponse({'status': 'error'}, status=400)
 
-
-
-
 @login_required
 def create_post(request):
     categories = Category.objects.all() # ✅ Fetch categories from the database
@@ -103,9 +100,9 @@ def add_comment(request, post_id):
         Comment.objects.create(post=post, user=request.user, content=content)
     return redirect('post_detail', slug=post.slug)  # Fixed the redirect to use slug instead of id
 
-def CategoryDetailview(request):
-    categories = Category.objects.all()
-    return render(request, "base.html", {"categories": categories})
+# def CategoryDetailview(request):
+#     categories = Category.objects.all()
+#     return render(request, "base.html", {"categories": categories})
 
 # ViewSets for API
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -250,9 +247,9 @@ def saved_posts(request):
         return render(request, 'saved.html', {'error': 'User not found'})
 
 
-def category_details(request):
-    Category = get_object_or_404(Category, name="Some Category")
-    return render(request, 'category_detail.html', {'category': Category})
+def category_details(request, slug):
+    categories = Category.objects.all()
+    return render(request, 'category_detail.html', {'Categories': categories})
 
 @login_required
 def like_post(request, post_slug):
@@ -269,3 +266,4 @@ def like_post(request, post_slug):
         Like.objects.create(username=request.user, post=post)
 
     return redirect('post_detail', post_slug=post.slug)
+
