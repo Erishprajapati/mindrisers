@@ -247,9 +247,10 @@ def saved_posts(request):
         return render(request, 'saved.html', {'error': 'User not found'})
 
 
-def category_details(request, slug):
-    categories = Category.objects.all()
-    return render(request, 'category_detail.html', {'Categories': categories})
+def category_details(request):
+    category = Category.objects.all()  
+
+    return render(request, 'category_detail.html', {'Categories': category})
 
 @login_required
 def like_post(request, post_slug):

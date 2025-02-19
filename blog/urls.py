@@ -15,7 +15,7 @@ urlpatterns = [
     path('',home,name='home'),
     path('create/', create_post, name="create_post"),
     path('post/<slug:post_slug>/', views.post_detail, name='post_detail'),
-    path('category/<slug:slug>/', views.category_details, name='category_details'),
+    path('category/<slug:slug>/', category_details, name='category_details'),
     path('post/<slug:slug>/', views.post_list, name='post_list'),
     path('login/', views.login_view, name = 'login'),
     path('register/', views.register_view, name = 'register'),
@@ -23,6 +23,4 @@ urlpatterns = [
     path('confirm-logout', confirm_logout, name = 'confirm_logout'),
     path('saved/',saved_posts, name ='saved'),
     path('post/<slug:post_slug>/liked/', like_post, name='like_post')
-
-        
 ]
