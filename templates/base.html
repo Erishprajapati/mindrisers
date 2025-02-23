@@ -104,8 +104,6 @@
     transform: scale(1.07);
     box-shadow: 0 0 12px rgba(255, 221, 87, 0.5);
 }
-
-        
     </style>
 </head>
 <body>
@@ -135,7 +133,7 @@
                         </a>
                         <ul class="dropdown-menu">
                         {% for category in categories %}
-                            <li><a class="dropdown-item" href="{category_title}">{{ category.slug }}</a></li>
+                        <li><a class="dropdown-item" href="{ category.slug }">{{ category.name }}</a></li>
                         {% empty %}
                             <li><a class="dropdown-item" href="#">No Categories Available</a></li>
                         {% endfor %} 
