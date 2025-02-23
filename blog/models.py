@@ -108,8 +108,6 @@ class CustomUserManager(models.Manager):
 
     def create_superuser(self, email, user, password=None):
         username = self.create_user(email, user, password)
-        # user.is_staff = True
-        # username.is_superuser = True
         username.save(using=self._db)
         return username
 

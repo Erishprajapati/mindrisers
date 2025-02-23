@@ -10,7 +10,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 # from django.contrib.auth.models import User
-from django.http import JsonResponse
+# from django.http import JsonResponse
+# from django.core.exceptions import ObjectDoesNotExist
+from django.utils.text import slugify
+
+
 # Create your views here.
 
 def post_list(request):
@@ -82,6 +86,8 @@ def create_post(request):
         return redirect('home')
 
     return render(request, 'create_post.html', {'categories': categories})  # ✅ Pass categories
+
+
 
 def search_blogs(request):
     query = request.GET.get('q')
@@ -246,9 +252,17 @@ def saved_posts(request):
     except User.DoesNotExist:
         return render(request, 'saved.html', {'error': 'User not found'})
 
-def Categorys(request, slug):  # Accept slug parameter
-    category = get_object_or_404(Category, slug=slug)  # Get category by slug
-    return render(request, 'category_detail.html', {'category': category})
+# def Category_detail(request, slug):
+#     category = get_object_or_404(Category, slug=slug)  # Use lowercase variable name
+#     posts = category.posts.all()  # Fetch posts related to the category
+
+#     return render(request, 'category_detail.html', {'category': category, 'posts': posts})
+
+#chatgpt code try:
+def category_detail(request, slug):
+    category = get_object_or_404(Category, slug=slug)  # Fetch single category
+    categories = Category.objects.all()  # Fetch all categories for the navbar
+    return render(request, 'category_detail.html', {'category': category, 'categories': categories})
 
 @login_required
 def like_post(request, post_slug):

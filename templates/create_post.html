@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <style>
     form {
@@ -107,9 +106,10 @@
         
         button {
             font-size: 1rem;
-        }
+        } 
     } 
 </style>
+
 <h2>Create a New Post</h2>
 <form method="POST">
     {% csrf_token %}
