@@ -24,7 +24,7 @@ def post_list(request):
 
 @login_required
 def post_detail(request, post_slug):
-    post = Post.objects.get(slug=post_slug)  # Get the post by slug
+    post = get_object_or_404(Post, slug=post_slug)  # Get the post by slug
     
     # Handle the comment submission
     if request.method == "POST":
@@ -124,7 +124,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         post_id = self.request.query_params.get('post_id', None)
         if post_id:
-            return Comment.objects.filter(post_slug=post_slug)
+            return Comment.objects.filter(post_id=post_id)
         return Comment.objects.all()
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -189,7 +189,7 @@ def login_view(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, email=email, password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             return redirect('home')
@@ -216,7 +216,7 @@ def register_view(request):
             return redirect("register")
 
         # Create the user using the custom manager's create_user method
-        user = CustomUser.objects.create_user(username=username, email=email, password=password)
+        user = CustomUser.objects.create_user(user=user.username,email=email, password=password)
 
         # Create the user's profile (make sure you're passing the correct user object)
         profile = Profile.objects.create(user=user, bio=bio)
@@ -246,18 +246,17 @@ def saved_posts(request):
     except User.DoesNotExist:
         return render(request, 'saved.html', {'error': 'User not found'})
 
-
-def category_details(request):
-    category = Category.objects.all()  
-
-    return render(request, 'category_detail.html', {'Categories': category})
+def Categorys(request, slug):  # Accept slug parameter
+    category = get_object_or_404(Category, slug=slug)  # Get category by slug
+    return render(request, 'category_detail.html', {'category': category})
 
 @login_required
 def like_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     
     # Check if the user already liked the post
-    existing_like = Like.objects.filter(username=request.user, post=post).first()
+    existing_like = Like.objects.filter(user=request.user, post=post).first()
+
     
     if existing_like:
         # If the like exists, remove it (unlike)

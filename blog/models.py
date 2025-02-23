@@ -14,7 +14,7 @@ class User(models.Model):
         return self.username
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(unique=True, blank=True, null=True)
+    slug = models.SlugField(unique=True, blank=True, null=True, default = "")
     description = models.TextField()
 
     def save(self, *args, **kwargs):
@@ -109,7 +109,7 @@ class CustomUserManager(models.Manager):
     def create_superuser(self, email, user, password=None):
         username = self.create_user(email, user, password)
         # user.is_staff = True
-        username.is_superuser = True
+        # username.is_superuser = True
         username.save(using=self._db)
         return username
 
@@ -139,7 +139,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user', 'email', 'password']
+    REQUIRED_FIELDS = ['user', 'password']
 
     def __str__(self):
         return self.email
