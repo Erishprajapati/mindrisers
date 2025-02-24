@@ -133,11 +133,10 @@
                         </a>
                         <ul class="dropdown-menu">
                         {% for category in categories %}
-                        <li><a class="dropdown-item" href="{ category.slug }">{{ category.name }}</a></li>
+                        <li><a class="dropdown-item" href="{#}">{{ category.name }}</a></li>
                         {% empty %}
-                            <li><a class="dropdown-item" href="#">No Categories Available</a></li>
-                        {% endfor %} 
-                        
+                            <li><a class="dropdown-item" href="{'category_detail' category.slug }">No Categories Available</a></li>
+                        {% endfor %}  
 
                         </ul>
                     </li>
