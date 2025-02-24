@@ -13,6 +13,7 @@ from django.core.paginator import Paginator
 # from django.http import JsonResponse
 # from django.core.exceptions import ObjectDoesNotExist
 from django.utils.text import slugify
+from django.contrib.auth import get_user_model
 
 
 # Create your views here.
@@ -63,31 +64,46 @@ def post_detail(request, post_slug):
 
 @login_required
 def create_post(request):
-    categories = Category.objects.all() # ✅ Fetch categories from the database
+    categories = Category.objects.all()
+    User = get_user_model()  # ✅ Get the User model
 
     if request.method == "POST":
         title = request.POST.get('title')
         slug = request.POST.get('slug')
         content = request.POST.get('content')
-        category_slug = request.POST.get('category')  # Fetching category by slug
-        image = request.FILES.get('image')  # Handling file upload
-        user = request.user # ✅ Get actual User instance
-        
-        category = Category.objects.get(slug=category_slug)  
+        category_slug = request.POST.get('category')  # ✅ Slug for category
+        image = request.FILES.get('image')
 
+        # ✅ Convert Lazy User Object to actual User instance
+        author = request.user
+
+        # ✅ Fetch category safely
+        try:
+            category = Category.objects.get(slug=category_slug)
+        except Category.DoesNotExist:
+            messages.error(request, "Invalid category selected.")
+            return redirect('create_post')
+
+        # ✅ Correctly assign the author instance
         Post.objects.create(
             title=title,
             slug=slug,
             content=content,
-            category=category,  
+            category=category,
             image=image,
-            author=user  
+            author= CustomUser
         )
+        # Post.save() 
+        
         return redirect('home')
 
-    return render(request, 'create_post.html', {'categories': categories})  # ✅ Pass categories
+    return render(request, 'create_post.html', {'categories': categories})
 
 
+def category_detail(request, slug):
+    category = get_object_or_404(Category, slug=slug)  # Fetch single category
+    categories = Category.objects.all()  # Fetch all categories for the navbar
+    return render(request, 'category_detail.html', {'category': category, 'categories': categories})
 
 def search_blogs(request):
     query = request.GET.get('q')
@@ -207,13 +223,13 @@ def login_view(request):
 
 def register_view(request):
     if request.method == "POST":
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        bio = request.POST['bio']
-        profile_pic = request.FILES.get('profile_pic')
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        bio = request.POST.get("bio")
+        profile_pic = request.FILES.get("profile_pic")
 
-        # Check if the username or email already exists
+        # Check if username or email already exists
         if CustomUser.objects.filter(username=username).exists():
             messages.error(request, "Username is already in use")
             return redirect("register")
@@ -221,23 +237,20 @@ def register_view(request):
             messages.error(request, "Email already registered")
             return redirect("register")
 
-        # Create the user using the custom manager's create_user method
-        user = CustomUser.objects.create_user(user=user.username,email=email, password=password)
+        # Create the user
+        user = CustomUser.objects.create_user(username=username, email=email, password=password)
 
-        # Create the user's profile (make sure you're passing the correct user object)
-        profile = Profile.objects.create(user=user, bio=bio)
+        # Create the profile
+        profile = Profile.objects.create(user=CustomUser, bio=bio)  # Use 'user=user'
 
-        # Assign the profile picture if provided
         if profile_pic:
             profile.profile_picture = profile_pic
             profile.save()
 
-        # Log the user in immediately after registration
         login(request, user)
 
-        # Success message and redirect to login
         messages.success(request, "Registration successful! You are now logged in.")
-        return redirect("home")  # or redirect to any page you want to go after login
+        return redirect("home")
 
     return render(request, "register.html")
 
@@ -258,11 +271,6 @@ def saved_posts(request):
 
 #     return render(request, 'category_detail.html', {'category': category, 'posts': posts})
 
-#chatgpt code try:
-def category_detail(request, slug):
-    category = get_object_or_404(Category, slug=slug)  # Fetch single category
-    categories = Category.objects.all()  # Fetch all categories for the navbar
-    return render(request, 'category_detail.html', {'category': category, 'categories': categories})
 
 @login_required
 def like_post(request, post_slug):

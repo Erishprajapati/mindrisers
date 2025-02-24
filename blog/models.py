@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import *
+from django.conf import settings 
 # Create your models here.
 class User(models.Model):
     username = models.CharField(max_length=100)
@@ -58,9 +59,15 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_created=True)
 
 class Profile(models.Model):
-    username = models.ForeignKey(User, on_delete=models.CASCADE)  # Ensure OneToOneField is used
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Reference the custom user model
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+    def __str__(self):
+        return self.user.username  # Update this line as well
 
     def __str__(self):
         return self.User.username
@@ -80,44 +87,31 @@ class SavedPost(models.Model):
 #     liked = models.BooleanField(default=False)
 #     saved = models.BooleanField(default=False)
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("The Email field must be set")
+class CustomUserManager(BaseUserManager):  # ✅ Inherit from BaseUserManager
+    def create_user(self, email, username, password=None, **extra_fields):
+        
+        if not username:
+            raise ValueError("The Username field must be set")
+
         email = self.normalize_email(email)
-        username = self.model(email=email, **extra_fields)
-        username.set_password(password)
-        username.save(using=self._db)
-        return username
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        return self.create_user(email, password, **extra_fields)
-
-class CustomUserManager(models.Manager):
-    def create_user(self, email, user, password=None):
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        username = self.model(email=email, user = user)
-        username.set_password(password)
-        username.save(using=self._db)
+        user = self.model(email=email, username=username, **extra_fields)
+        user.set_password(password)  # ✅ Set the password properly
+        user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, user, password=None):
-        username = self.create_user(email, user, password)
-        username.save(using=self._db)
-        return username
+    def create_superuser(self, email, username, password=None, **extra_fields):
+        # extra_fields.setdefault('is_staff', True)
+        # extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(email, username, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
-    # is_staff = models.BooleanField(default=False)
+    # is_staff = models.BooleanField(default=False)  
 
-    # Specify related_name to avoid clashes with the default User model
+    
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
@@ -137,7 +131,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user', 'password']
+    REQUIRED_FIELDS = ['username']  # ✅ 'user' is not a valid field, replaced with 'username'
 
     def __str__(self):
         return self.email
